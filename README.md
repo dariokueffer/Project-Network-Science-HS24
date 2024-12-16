@@ -29,6 +29,10 @@ The table below shows the main categories crawled and some key metrics for each 
 
 ![Artificial intelligence](outputs/Artificial_intelligence.png)
 
+## Contributor Graph Builder
+
+The ContributorGraphBuilder class implemented in [src/data/contributor_graph_builder.py](src/data/contributor_graph_builder.py) creates a networkx graph based on the crawled data.
+
 ## GraphAnalyzer
 
 The GraphAnalyzer class implemented in [src/data/graph_analyzer.py](src/data/graph_analyzer.py) provides some tools for basic graph analysis.The following features are currently implemented: 

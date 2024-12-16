@@ -103,7 +103,7 @@ class GraphAnalyzer:
         plt.title(title)
         plt.show()
 
-    def plot_log_log_centrality_distribution(self, centralities, logarithmic_bins, x_label='not defined', y_label='number of nodes'): 
+    def plot_log_log_centrality_distribution(self, centralities, logarithmic_bins, x_label='not defined', y_label='Probability Density'): 
 
         plt.hist(centralities, bins=logarithmic_bins, density=True)
         # plt.xscale('log')

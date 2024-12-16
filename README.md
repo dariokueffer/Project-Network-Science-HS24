@@ -4,13 +4,30 @@ The original Jupyter notebook crawling the Wikipedia pages can be found at [note
 
 ## Crawled Categories
 
+The table below shows the main categories crawled and some key metrics for each main category. The following graphs show the evolution of some of these metrics over time for each category.
+
 | Category                | Number of Subcategories | Number of Pages | Number of Contributors | Number of Revisions |
 | ----------------------- | ----------------------- | --------------- | ---------------------- | ------------------- |
 | Amiga CD32 games        | 2                       | 143             | 8013                   | 29370               |
-| Game Boy games          | 6                       | 167             | 8953                   | 30851               |
+| Game boy games          | 6                       | 167             | 8953                   | 30851               |
 | Machine learning        | 61                      | 1548            | 75217                  | 273260              |
 | Artificial intelligence | 109                     | 8695            | 610800                 | 29368               |
 
+***Amiga CD32 games***
+
+![Amiga CD32 games](outputs/Amiga_CD32_games.png)
+
+***Game boy games***
+
+![Game boy games](outputs/Game_boy_games.png)
+
+***Machine learning***
+
+![Machine learning](outputs/Machine_learning.png)
+
+***Artificial intelligence***
+
+![Artificial intelligence](outputs/Artificial_intelligence.png)
 
 ## GraphAnalyzer
 
@@ -29,3 +46,11 @@ The GraphCommunityAnalyzer class implemented in [src/data/graph_community_analyz
 - Community detection with reedy modularity maximization
 - Community detection with label propagation algorithm
 - Comparison to randomized networks
+
+## Implementation
+
+### Database
+
+The file [src/models/models.py](src/models/models.py) contains the models for the database entities. The following figure shows the relationships.
+
+![Database Relations](outputs/image.png)

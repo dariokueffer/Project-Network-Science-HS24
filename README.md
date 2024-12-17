@@ -1,6 +1,6 @@
 # Network Science Project
 
-The original Jupyter notebook crawling the Wikipedia pages can be found at [notebookes/wiki-data-acquisition.ipynb](notebookes/wiki-data-acquisition.ipynb). I started refactoring the code, removing certain parts from the notebook and putting them in separate files.
+The original Jupyter notebook crawling the Wikipedia pages can be found at [notebookes/wiki-data-acquisition.ipynb](notebookes/wiki-data-acquisition.ipynb). I started refactoring the code, removing certain parts from the notebook and putting them in separate files. The generated graphs and the database file can be found here in this [Dropbox](https://www.dropbox.com/scl/fo/g6qklql2q2s53qvp6y3n1/ACHF47mTMe5uUL759gj7CGI?rlkey=zhibh8nhejatt6lbwgd1hlp9u&st=9p1ooacn&dl=0). The database file needs to be placed in [src/acquisition/models/db](src/acquisition/models/db) and the graph files in [outputs/graphs](outputs/graphs).
 
 ## Requirements
 

@@ -1,3 +1,5 @@
 *.pyc
 __pycache__/
 .DS_Store
+src/acquisition/models/db/*.db
+outputs/graphs/*.gt

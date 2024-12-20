@@ -12,7 +12,8 @@ import matplotlib.pyplot as plt
 import multiprocessing
 from graph_tool.centrality import closeness, betweenness, eigenvector
 import time
-from src.analyzs.utils import randomize_graph
+from src.analysis.utils import randomize_graph
+from graph_tool import openmp_set_num_threads
 
 
 class CentralityAnalyzer:

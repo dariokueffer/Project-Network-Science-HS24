@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import multiprocessing
 from graph_tool.centrality import closeness, betweenness, eigenvector
 import time
+from src.analysis.utils import randomize_graph
 
 
 class BasicGraphAnalyzer:
@@ -70,7 +71,7 @@ class BasicGraphAnalyzer:
         data = [(x, y, color, label_real_network)]
 
         if plot_randomized:
-            self.randomize_graph()
+            self.randomized_graph = randomize_graph(self.graph)
 
             x, y = self.get_degree_and_average_degree_of_neighbors(self.randomized_graph)
             assortativity_randomized_network = self.calculate_assortativity(self.randomized_graph)

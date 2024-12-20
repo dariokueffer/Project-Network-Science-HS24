@@ -1,3 +1,5 @@
+from graph_tool.generation import random_rewire
+
 def randomize_graph(G):
     randomized_graph = G.copy()
     random_rewire(randomized_graph, 

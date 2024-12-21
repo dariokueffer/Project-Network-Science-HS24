@@ -203,6 +203,20 @@ class DatabaseManager:
         
         return {c.id: c.co_contribution_count for c in query}
 
+    def get_distinct_contributors_per_page(self, main_category_id):
+        """Get the number of distinct contributors per page for a given main category."""
+        query = (
+            Revision
+            .select(
+                Revision.page,
+                fn.COUNT(fn.DISTINCT(Revision.contributor)).alias('distinct_contributors')
+            )
+            .where(Revision.main_category == main_category_id)
+            .group_by(Revision.page)
+        )
+        
+        return {r.page.id: r.distinct_contributors for r in query}
+
     def close(self):
         if not self.db.is_closed():
             self.db.close()

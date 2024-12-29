@@ -254,6 +254,9 @@ class DatabaseManager:
             )
         )
         return query.dicts().get()
+
+    def get_contributor_username(self, contributor_id):
+        return Contributor.get(Contributor.id == contributor_id).username
     
     def close(self):
         if not self.db.is_closed():

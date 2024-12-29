@@ -65,8 +65,21 @@ class CentralityAnalyzer:
         except Exception as e:
             print(f"Error calculating centralities: {e}")
             raise
+    
 
-
+    def get_closeness_centrality(self, is_randomized=False):
+        return self.centrality[f'closeness{"_randomized" if is_randomized else ""}']
+    
+    def get_betweenness_centrality(self, is_randomized=False):
+        return self.centrality[f'betweenness{"_randomized" if is_randomized else ""}']
+    
+    def get_eigenvector_centrality(self, is_randomized=False):
+        return self.centrality[f'eigenvector{"_randomized" if is_randomized else ""}']
+    
+    def get_degrees(self, is_randomized=False):
+        return self.centrality[f'degrees{"_randomized" if is_randomized else ""}']
+    
+    
     def plot_log_log_centrality_distribution(self, centralities, logarithmic_bins, x_label='not defined', y_label='Probability Density'): 
 
         plt.hist(centralities, bins=logarithmic_bins, density=True)

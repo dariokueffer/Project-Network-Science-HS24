@@ -217,6 +217,44 @@ class DatabaseManager:
         
         return {r.page.id: r.distinct_contributors for r in query}
 
+    def get_number_of_revisions_per_contributor(self, contributor_id, main_category_id):
+
+        query = (
+            Revision
+            .select(
+                fn.COUNT(Revision.id).alias('num_revisions')
+            )
+            .where(
+                (Revision.contributor == contributor_id) &
+                (Revision.main_category == main_category_id)
+            )
+        )
+        return query.scalar()
+    
+    def get_total_number_of_revisions_per_main_category(self, main_category_id):
+        query = (
+            Revision
+            .select(
+                fn.COUNT(Revision.id).alias('num_revisions')
+            )
+            .where(Revision.main_category == main_category_id)
+        )
+        return query.scalar()
+    
+    def get_oldest_and_newest_revision_per_contributor_and_main_category(self, contributor_id, main_category_id):
+        query = (
+            Revision
+            .select(
+                fn.MIN(Revision.timestamp).alias('oldest_revision'),
+                fn.MAX(Revision.timestamp).alias('newest_revision')
+            )
+            .where(
+                (Revision.contributor == contributor_id) &
+                (Revision.main_category == main_category_id)
+            )
+        )
+        return query.dicts().get()
+    
     def close(self):
         if not self.db.is_closed():
             self.db.close()

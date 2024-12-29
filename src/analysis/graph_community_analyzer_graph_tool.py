@@ -13,41 +13,38 @@ class GraphCommunityAnalyzerGraphTool:
         self.output_filename = output_filename
         self.communities = {}
         self.randomized_graph = self.graph.copy()
-        self.randomized_graph = generation.random_rewire(
-            self.randomized_graph, n_iter=3)
+        generation.random_rewire(self.randomized_graph, n_iter=3)
+        print(f'Graph: {self.graph.num_vertices()} vertices, {self.graph.num_edges()} edges')
+        print(f'Randomized Graph: {self.randomized_graph.num_vertices()} vertices, {self.randomized_graph.num_edges()} edges')
 
-        # self.randomized_graph = nx.algorithms.smallworld.random_reference(graph, niter=3, connectivity=False, seed=None)
 
-    # def get_hierarchical_community_detection(self, is_random=False):
-    #     gt.seed_rng(0)
-
-    #     g = self.randomized_graph if is_random else self.graph
-    #     print(f"Data type of graph: {type(g)}")
-    #     sargs = dict(recs=[g.ep.weight], rec_types=["real-exponential"])
-    #     state = gt.minimize_nested_blockmodel_dl(g, state_args=sargs)
-    #     state.draw(edge_color=gt.prop_to_size(g.ep.weight, power=1,log=True),ecmap=(matplotlib.cm.inferno, .6),eorder=g.ep.weight,edge_pen_width=gt.prop_to_size(g.ep.weight,1, 4,power=1,log=True),edge_gradient=[])
-
-    def calc_minimize_blockmodel_dl(self, is_random=False):
+    def calc_minimize_blockmodel_dl(self, is_random=False, output_plot=False):
         suffix = "_random" if is_random else ""
         g = self.randomized_graph if is_random else self.graph
         state = gt.minimize_blockmodel_dl(g)
-        self.communities[f'communities_modularity{suffix}'] = state.get_blocks()
-        state.draw(vertex_shape=state.get_blocks(), output=f"{self.output_filename}_modularity{suffix}.png")
+        self.communities[f'communities_blockmodel{suffix}'] = state.get_blocks()
+        print(f"Number of blocks: {state.get_B()}")
+        print(f"Effective number of blocks: {state.get_Be()}")
+        print(f"Non-Empty number of blocks: {state.get_nonempty_B()}")
 
-    # def calculate_community_quality(self, is_random=False):
-    #     G = self.randomized_graph if is_random else self.graph
-    #     suffix = "_random" if is_random else ""
+        if output_plot:
+            state.draw(vertex_shape=state.get_blocks(), output=f"{self.output_filename}_blockmodel{suffix}.png")
+    
+    def calc_modularity_maximization(self, is_random=False, output_plot=False, niter=10):
+        suffix = "_random" if is_random else ""
+        g = self.randomized_graph if is_random else self.graph
+        state = gt.ModularityState(g)
+        state.mcmc_sweep(niter=niter)
+        self.communities[f'communities_modularity{suffix}'] = state.b
+        print(f"Number of blocks: {state.get_B()}")
+        # print(f"Effective number of blocks: {state.get_Be()}") //bug in library
+        if output_plot:
+            state.draw(output=f"{self.output_filename}_modularity{suffix}.png")
 
-    #     coomunities_greedy = self.communities[f'communities_greedy{suffix}']
-    #     coomunities_label_prop = self.communities[f'communities_label_prop{suffix}']
-
-    #     modularity_greedy = nx.community.quality.modularity(
-    #         G, coomunities_greedy)
-    #     modularity_label_prop = nx.community.quality.modularity(
-    #         G, coomunities_label_prop)
-
-    #     self.communities[f'modularity_greedy{suffix}'] = modularity_greedy
-    #     self.communities[f'modularity_label_prop{suffix}'] = modularity_label_prop
+    def calculate_modularity_newman(self, is_random=False, comm_type="blockmodel"):
+            suffix = "_random" if is_random else ""
+            g = self.randomized_graph if is_random else self.graph
+            return gt.modularity(g, self.communities[f'communities_{comm_type}{suffix}'])
 
     # def print_communities(self, is_comparison=False):
     #     print(50*'-')

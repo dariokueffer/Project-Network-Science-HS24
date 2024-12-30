@@ -1,6 +1,7 @@
 from peewee import SqliteDatabase
 from peewee import fn
 from src.acquisition.models.models import Page, Contributor, Revision, MainCategory, Crawls
+import pandas as pd
 
 class DatabaseManager:
     def __init__(self,db):
@@ -140,6 +141,46 @@ class DatabaseManager:
         if not df.empty:
             df['month'] = pd.to_datetime(df['month'], format='%Y-%m')
 
+        return df
+
+    def get_unique_stats_per_month(self, main_category_id, contributor_ids=None):
+        """
+        Get unique contributors and pages per month, filtered by main_category_id and optionally by contributor_ids.
+        
+        Args:
+            main_category_id: ID of the main category to filter by
+            contributor_ids: Optional list of contributor IDs to filter by
+        
+        Returns:
+            Pandas DataFrame with monthly statistics
+        """
+        from peewee import fn
+        
+        query = (
+            Revision
+            .select(
+                fn.strftime('%Y-%m', Revision.timestamp).alias('month'),
+                fn.COUNT(Revision.id).alias('total_contributions'),
+                fn.COUNT(fn.DISTINCT(Revision.page)).alias('unique_pages'),
+                fn.COUNT(fn.DISTINCT(Revision.contributor)).alias('unique_contributors')
+            )
+            .group_by(fn.strftime('%Y-%m', Revision.timestamp))
+            .order_by(fn.strftime('%Y-%m', Revision.timestamp))
+        )
+        
+        # Base filter for main category
+        query = query.where(Revision.main_category == main_category_id)
+        
+        # Add contributor filter if provided
+        if contributor_ids:
+            query = query.where(Revision.contributor.in_(contributor_ids))
+        
+        results = list(query.dicts())
+        df = pd.DataFrame(results)
+        
+        if not df.empty:
+            df['month'] = pd.to_datetime(df['month'], format='%Y-%m')
+        
         return df
 
     def get_co_contributors(self, contributor_id, main_category_id):

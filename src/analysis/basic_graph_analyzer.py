@@ -62,12 +62,16 @@ class BasicGraphAnalyzer:
 
         return unique_degrees, averaged_average_degrees
 
-    def plot_degree_vs_avg_degree(self, title, plot_randomized=False):
+    def plot_degree_vs_avg_degree(self, title, plot_randomized=False, show_assortativity=True):
         x, y = self.get_degree_and_average_degree_of_neighbors()
         assortativity_real_network = self.calculate_assortativity()
 
         color = 'blue'
-        label_real_network = f'Real network (assortativity: {assortativity_real_network:.3g})'
+        if show_assortativity:
+            label_real_network = f'Real network (assortativity: {assortativity_real_network:.3g})'
+        else:
+            label_real_network = f'Real network'
+
         data = [(x, y, color, label_real_network)]
 
         if plot_randomized:
@@ -77,7 +81,11 @@ class BasicGraphAnalyzer:
             assortativity_randomized_network = self.calculate_assortativity(self.randomized_graph)
 
             color = 'red'
-            label_randomized_network = f'Randomized network (assortativity: {assortativity_randomized_network:.3g})'
+
+            if show_assortativity:
+                label_randomized_network = f'Randomized network (assortativity: {assortativity_randomized_network:.3g})'
+            else:
+                label_randomized_network = f'Randomized network'
             data.append((x, y, color, label_randomized_network))
 
         fig, ax = plt.subplots()

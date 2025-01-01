@@ -17,11 +17,14 @@ from graph_tool import openmp_set_num_threads
 
 
 class CentralityAnalyzer:
-    def __init__(self, graph):
+    def __init__(self, graph, network_name=None):
         self.graph = graph
         self.randomized_graph = None
         self.measures = ['degrees','closeness', 'betweenness', 'eigenvector']
+        self.measures_y_label = ['Probability Density', 'Probability Density', 'Probability Density', 'Probability Density']
+        self.measures_x_label = ['Degree Centrality', 'Closeness Centrality', 'Betweenness Centrality', 'Eigenvector Centrality']
         self.centrality = {}
+        self.network_name = network_name
 
 
     def calculate_centralities(self, is_randomized=False, num_threads=4):
@@ -87,7 +90,7 @@ class CentralityAnalyzer:
         plt.yscale('log')
         plt.xlabel(x_label)
         plt.ylabel(y_label)
-        plt.title('Title')
+        plt.title(f"{self.measures_x_label[self.measures.index(x_label)]} - {self.network_name}")
         plt.show()
 
     def plot_centralities(self):
@@ -95,7 +98,7 @@ class CentralityAnalyzer:
 
         for measure in self.measures:
             linear_bins = np.linspace(min(self.centrality[measure]), max(self.centrality[measure]), num=16)
-            self.plot_log_log_centrality_distribution(self.centrality[measure], linear_bins, measure, 'TBD')
+            self.plot_log_log_centrality_distribution(self.centrality[measure], linear_bins, measure, self.measures_y_label[self.measures.index(measure)])
 
 
     def plot_centralities_comparison(self):
@@ -111,10 +114,10 @@ class CentralityAnalyzer:
         for measure_pair in measure_pairs:
 
             data_structure.append([(self.centrality[measure_pair[0]], self.centrality[measure_pair[1]], 'blue',
-                                f"{measure_pair[0]} vs {measure_pair[1]}", measure_pair[0], measure_pair[1], 'Title')])
+                                f"{measure_pair[0]} vs {measure_pair[1]}", measure_pair[0], measure_pair[1], f"{measure_pair[0]} vs {measure_pair[1]}")])
 
         self.plot_centrality_measure_vs_centrality_measure(
-            data_structure, f"{measure_pair[0]} vs {measure_pair[1]}", show_legend=False)
+            data_structure, 'Centrality Comparison', show_legend=False)
     
 
   
@@ -173,6 +176,6 @@ class CentralityAnalyzer:
 
         for measure_pair in measure_pairs_randomized:
             data_structure.append([(self.centrality[measure_pair[0]], self.centrality[measure_pair[1]], 'blue',
-                                    f"{measure_pair[0]} vs {measure_pair[1]}", measure_pair[0], measure_pair[1], 'Title')])
+                                    f"{measure_pair[0]} vs {measure_pair[1]}", measure_pair[0], measure_pair[1], self.measures_x_label[self.measures.index(measure_pair[0])])])
         self.plot_centrality_measure_vs_centrality_measure(
-                data_structure, f"{measure_pair[0]} vs {measure_pair[1]}", show_legend=False)
+                data_structure, "Real vs. Randomized Network", show_legend=False)

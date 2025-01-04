@@ -4,11 +4,16 @@ This repository is part of the final project of the Network Science course at th
 
 ## Table of Contents
 
-1. [About](#about)
-2. [Data](#data)
-3. [Requirements and Installation](#requirements-and-installation)
-4. [Usage](#usage)
-5. [Features](#features)
+- [Network Science Project HS2024](#network-science-project-hs2024)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Data](#data)
+  - [Requirements and Installation](#requirements-and-installation)
+  - [Usage](#usage)
+  - [Features](#features)
+    - [Data Acquisition](#data-acquisition)
+    - [Data Analysis](#data-analysis)
+  - [Acknowledgement](#acknowledgement)
 
 ## About
 // Todo
@@ -108,9 +113,9 @@ The Contributor Graph Builder class implemented in [src/acquisition/graph-tool/c
 
 ### Data Analysis
 
-**GraphAnalyzer**
+**Basic Graph Analyzer**
 
-The GraphAnalyzer class implemented in [src/analysis/basic_graph_analyzer.py](src/analysis/basic_graph_analyzer.py) provides some tools for basic graph analysis.The following features are currently implemented: 
+The Basic Graph Analyzer class implemented in [src/analysis/basic_graph_analyzer.py](src/analysis/basic_graph_analyzer.py) provides some tools for basic graph analysis.The following features are currently implemented: 
 
 - Plot Degree vs. Average Degree of neighbors
 - Log-log plot of probability density
@@ -118,28 +123,41 @@ The GraphAnalyzer class implemented in [src/analysis/basic_graph_analyzer.py](sr
 - Plot comparison of different centralities
 - Plot comparison of real to randomized network for all centralities
 
+**Scale Free Analyzer**
 
-**CentralityAnalyzer**
+- fit degree distribution to exponential distribution and to power-law distribution
+- for unweighted and weighted graphs
+- fit power-law distribution for values above a variable threshold
+- calculate exponent alpha for power-law fit
+- plot these distributions
 
-Implemented at [src/analysis/centrality_analyzer.py](src/analysis/centrality_analyzer.py)
+*Basic usage of ScaleFreeAnalyzer:*
+````
+scale_free_analyzer = ScaleFreeAnalyzer(G)
+scale_free_analyzer.plot_degree_distribution(main_category)
+````
+*Only fit to degree values above 10^3:*
+````
+scale_free_analyzer.set_filter(10**3)
+scale_free_analyzer.plot_degree_distribution(main_category)
+````
+*Use with weighted graphs:*
+````
+scale_free_analyzer = ScaleFreeAnalyzer(G, is_weighted=True)
+scale_free_analyzer.plot_degree_distribution(f'Weighted {main_category}')
+````
 
-// TBD
+**Centrality Analyzer**
 
-**Scale-free Analyzer**
-
-Currently still in the notebook [analysis.py](analysis.ipynb)
-
-// TBD
 
 **GraphCommunityAnalyzer**
 
 The GraphCommunityAnalyzer class implemented in [src/analysis/graph_community_analyzer.py](src/analysis/graph_community_analyzer.py) provides some tools for basic community analysis. The following features are currently implemented: 
 
-- Community detection with reedy modularity maximization
+- Community detection with greedy modularity maximization
 - Community detection with label propagation algorithm
 - Comparison to randomized networks
 
-## Implementation
 
-### Database
 
+## Acknowledgement

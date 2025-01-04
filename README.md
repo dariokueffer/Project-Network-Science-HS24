@@ -16,7 +16,13 @@ This repository is part of the final project of the Network Science course at th
   - [Acknowledgement](#acknowledgement)
 
 ## About
-// Todo
+We would like to look into the following questions:
+
+- How are Wikipedia contributors in the articles of a specific subcategory organized in terms of their co-authorships and contributions? 
+- Are there contributors who act as central hubs in the community, playing a key role in coordinating or influencing content creation and editing? 
+- Does the contributor network exhibit scale-free properties, where a few contributors dominate interactions while most others have fewer connections? 
+
+To do this, we built a graph where the nodes represent contributors and the edges occur when two contributors have contributed to the same article at least once. To organise it flexibly, we first crawl Wikipedia articles for certain main categories and store all the necessary information in a SQLite database, so that we can later freely construct different graphs (e.g. weighted, unweighted, ...). We crawled four different categories, created graphs for all of them and performed different analyses on these graphs. The following sections describe our approach from a technical perspective, while the final report and presentation describe it more from a research perspective.
 
 ## Data
 

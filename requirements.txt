@@ -2,3 +2,5 @@ networkx
 peewee
 powerlaw
 mwclient
+tqdm
+pandas

@@ -5,7 +5,7 @@ import numpy as np
 from scipy.stats import pearsonr, spearmanr, kendalltau
 import math
 from tqdm import tqdm
-from graph_tool.correlations import scalar_assortativity
+from graph_tool.correlations import scalar_assortativity, assortativity
 from graph_tool.generation import random_rewire
 import graph_tool as gt
 import numpy as np
@@ -20,11 +20,16 @@ class BasicGraphAnalyzer:
     def __init__(self, graph):
         self.graph = graph
         self.randomized_graph = None
+        self.unique_degrees = {}
+        self.averaged_average_degrees = {}
 
 
-    def get_degree_and_average_degree_of_neighbors(self, G=None):
+    def get_degree_and_average_degree_of_neighbors(self, G=None, label='real'):
         if G is None:
             G = self.graph
+
+        if label in self.unique_degrees:
+            return self.unique_degrees[label], self.averaged_average_degrees[label]
 
         degrees, average_degrees = [], []
 
@@ -60,6 +65,9 @@ class BasicGraphAnalyzer:
             unique_degrees.append(degree)
             averaged_average_degrees.append(values['sum'] / values['count'])
 
+        self.unique_degrees[label] = unique_degrees
+        self.averaged_average_degrees[label] = averaged_average_degrees
+
         return unique_degrees, averaged_average_degrees
 
     def plot_degree_vs_avg_degree(self, title, plot_randomized=False, show_assortativity=True):
@@ -77,8 +85,8 @@ class BasicGraphAnalyzer:
         if plot_randomized:
             self.randomized_graph = randomize_graph(self.graph)
 
-            x, y = self.get_degree_and_average_degree_of_neighbors(self.randomized_graph)
-            assortativity_randomized_network = self.calculate_assortativity(self.randomized_graph)
+            x, y = self.get_degree_and_average_degree_of_neighbors(self.randomized_graph, label='randomized')
+            assortativity_randomized_network = self.calculate_assortativity(G=self.randomized_graph)
 
             color = 'red'
 
@@ -106,8 +114,11 @@ class BasicGraphAnalyzer:
             G = self.graph
 
         degree_map = G.degree_property_map("total")
-        assortativity, _ = scalar_assortativity(G, degree_map)
-        return assortativity
+
+        degree_map.a = degree_map.a.astype(np.float64)
+
+        value, err = scalar_assortativity(G, degree_map)
+        return value
 
     def plot_log_log_probability_density(self, title):
         G = self.graph

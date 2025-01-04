@@ -45,7 +45,7 @@ class WikipediaCategoryCrawler():
     def get_category_pages(self, category):
         cat = self.site.categories[category]
 
-        pages = [page for page in cat if page.namespace == 0]  # Collect only pages in namespace 0
+        pages = [page for page in cat if page.namespace == 0]  # Collect only pages in namespace 0, which corespond to articles
         print()
         print(f"Number of pages in category '{category}': {len(pages)}")
 
@@ -90,6 +90,3 @@ class WikipediaCategoryCrawler():
         )
 
         self.db_manager.update_main_category(self.main_category_id, len(self.visited_categories))
-
-
-

@@ -1,8 +1,33 @@
-# Network Science Project
+# Network Science Project HS2024
 
-The original Jupyter notebook crawling the Wikipedia pages can be found at [notebookes/wiki-data-acquisition.ipynb](notebookes/wiki-data-acquisition.ipynb). I started refactoring the code, removing certain parts from the notebook and putting them in separate files. The generated graphs and the database file can be found here in this [Dropbox](https://www.dropbox.com/scl/fo/g6qklql2q2s53qvp6y3n1/ACHF47mTMe5uUL759gj7CGI?rlkey=zhibh8nhejatt6lbwgd1hlp9u&st=9p1ooacn&dl=0). The database file needs to be placed in [src/acquisition/models/db](src/acquisition/models/db) and the graph files in [outputs/graphs](outputs/graphs).
+This repository is part of the final project of the Network Science course at the University of Zurich, autumn term 2024. We acquired data from Wikipedia, created different graphs and performed different analyses on these graphs. A detailed description of what we did, why we did it and the results can be found in the final report. A very short summary can be found in the [About](#about) section of this readme.
 
-## Requirements
+## Table of Contents
+
+1. [About](#about)
+2. [Data](#data)
+3. [Requirements and Installation](#requirements-and-installation)
+4. [Usage](#usage)
+5. [Features](#features)
+
+## About
+// Todo
+
+## Data
+
+The table below sows the main categories crawled and some key metrics for each main category. The following graphs show the evolution of some of these metrics over time for each category.
+
+| Category                | Number of Subcategories | Number of Pages | Number of Contributors | Number of Revisions |
+| ----------------------- | ----------------------- | --------------- | ---------------------- | ------------------- |
+| Amiga CD32 games        | 2                       | 143             | 8013                   | 29370               |
+| Game boy games          | 6                       | 167             | 8953                   | 30851               |
+| Machine learning        | 61                      | 1548            | 75217                  | 273260              |
+| Artificial intelligence | 109                     | 8695            | 610800                 | 29368               |
+
+The generated graphs and the database file can be found here in this [Dropbox](https://www.dropbox.com/scl/fo/g6qklql2q2s53qvp6y3n1/ACHF47mTMe5uUL759gj7CGI?rlkey=zhibh8nhejatt6lbwgd1hlp9u&st=9p1ooacn&dl=0). The database file needs to be placed in [src/acquisition/models/db](src/acquisition/models/db) and the graph files in [outputs/graphs](outputs/graphs).
+
+
+## Requirements and Installation
 
 To improve performance, we use graph-tool instead of networkx. In graph-tool the core algorithms and data structures are implemented in C++. To install graph-tool, follow the instructions below:
 
@@ -44,19 +69,46 @@ For other systems, consult the official [graph-tool documentation](https://graph
  ````
  pip install -r requirements.txt
 ````
-## Running the Code
+## Usage
 
-There are two main Jupyter notebooks, one for [data acquisition](acquisition.ipynb) and one for [data analysis](analysis.ipynb). Both use code that is implemented in other files, which are also structured according to [acquisition](src/acquisition/) and [analysis](src/analysis/).
+There are several Jupyter notebooks, which all import code that is implemented in seperate classes to keep things tidy.
 
-## Data Acquisition
+**Data Acquistion**
 
-### Contributor Graph Builder
+The Jupyter notebook for acquiring the data and building the graphs is located at [01_acquisition.ipynb](01_acquisition.ipynb). Additional classes that are used and imported in this notebook are implemented in [src/acquisition](src/acquisition).
 
-The ContributorGraphBuilder class implemented in [src/acquisition/graph-tool/contributor_graph_builder.py](src/acquisition/graph-tool/contributor_graph_builder.py) creates a networkx graph based on the crawled data.
+**Data Analysis**
 
-## Data Analysis
+The analysis of the graphs is conducted in different Jupyter notebook files, seperated by analysis type and/or by the graph analyzed. The two notebooks [02_analysis_articles_contributors.ipynb](02_analysis_articles_contributors.ipynb) and [02_analysis_scale_free.ipynb](02_analysis_scale_free.ipynb) contain a distribution analysis for all four networks. The notebooks [03_analysis_Amiga_CD32_games.ipynb](03_analysis_Amiga_CD32_games.ipynb) and [04_analysis_Machine_learning.ipynb](04_analysis_Machine_learning) contain general graph analysis for the two networks, Amiga CD32 games and Machine learning. And finally, the notebooks [04_analysis_communities_Amiga_CD32_games.ipynb](04_analysis_communities_Amiga_CD32_games.ipynb) and  [04_analysis_communities_Machine_learning.ipynb](04_analysis_communities_Machine_learning.ipynb) contain a community and centrality analysis for the two networks, Amiga CD32 games and Machine learning. All additional classes for the analysis notebooks is implemented in the directory [src/analysis](src/analysis).
 
-### GraphAnalyzer
+## Features
+
+We started to implement the code using networkx, but soon realised that it took a very long time to run certain functions with networkx. We looked for other solutions and found graph-tool, which is a powerful and high-performance library that implements its core algorithms and data structures in C++. This greatly increased the speed of certain functions and made it possible to perform analysis and large graphs.
+
+### Data Acquisition
+
+For the data acquisition part, we implemented three different classes: the Database Manager, which is responsible for storing information in a structured way, the Wikipedia Category Crawler, which fetches data from the Wikipedia API, and the Contributor Graph Builder, which can build unweighted and weighted graphs from the data stored in the database. The three classes are described in more detail below.
+
+
+**Database Manager**
+
+In the file [database_manager.py](src/acquisition/models/database_manager.py) we have implemented a class that manages a SQLite database, providing the basic functionality for the database to work, plus additional methods needed to build the graph or perform certain analyses. The file [models.py](src/acquisition/models/models.py) contains the models for the database entities. The following figure shows the relationships.
+
+<p align="center">
+  <img src="outputs/sqlite_dataset_schema.png" alt="Database Relations" width="40%">
+</p>
+
+**Wikipedia Category Crawler**
+
+The Wikipedia Category Crawler class implemented in [wikipedia_crawler.py](src/acquisition/models/wikipedia_crawler.py) uses the mwclient library to retrieve data from Wikipedia. Categories are hierarchical: they can contain articles, or they can contain other categories, which can contain articles or categories. So the user can define a main (or root) category and a depth, which will then define the process of fetching the articles. First, we recursively fetch all subcategories for the defined root category and depth, then we fetch the pages of all these categories and store all relevant information in the database, revision, page (i.e. article) and contributor, according to the scheme above. At the end, an entry for the crawl is also added to the database, this is just metadata and more for information purposes.
+
+**Contributor Graph Builder**
+
+The Contributor Graph Builder class implemented in [src/acquisition/graph-tool/contributor_graph_builder.py](src/acquisition/graph-tool/contributor_graph_builder.py) creates a graph-tool graph based on the crawled data. It builds either a weighted graph, where the weights represent the number of times two contributors have contributed together, or an unweighted graph, which simply adds an edge if two contributors have contributed to the same article once. When instantiating an object of this class, a boolean flag can be set in the constructor to indicate whether a weighted graph should be created or not. To build the graph, the `build()` method must be called, at the end it will store the built graph in [outputs/graphs](outputs/graphs/) with the name given in the constructor.
+
+### Data Analysis
+
+**GraphAnalyzer**
 
 The GraphAnalyzer class implemented in [src/analysis/basic_graph_analyzer.py](src/analysis/basic_graph_analyzer.py) provides some tools for basic graph analysis.The following features are currently implemented: 
 
@@ -67,19 +119,19 @@ The GraphAnalyzer class implemented in [src/analysis/basic_graph_analyzer.py](sr
 - Plot comparison of real to randomized network for all centralities
 
 
-### CentralityAnalyzer
+**CentralityAnalyzer**
 
 Implemented at [src/analysis/centrality_analyzer.py](src/analysis/centrality_analyzer.py)
 
 // TBD
 
-### Scale-free Analyzer
+**Scale-free Analyzer**
 
 Currently still in the notebook [analysis.py](analysis.ipynb)
 
 // TBD
 
-## GraphCommunityAnalyzer
+**GraphCommunityAnalyzer**
 
 The GraphCommunityAnalyzer class implemented in [src/analysis/graph_community_analyzer.py](src/analysis/graph_community_analyzer.py) provides some tools for basic community analysis. The following features are currently implemented: 
 
@@ -91,34 +143,3 @@ The GraphCommunityAnalyzer class implemented in [src/analysis/graph_community_an
 
 ### Database
 
-The file [src/models/models.py](src/models/models.py) contains the models for the database entities. The following figure shows the relationships.
-
-![Database Relations](outputs/image.png)
-
-
-## Crawled Categories
-
-The table below shows the main categories crawled and some key metrics for each main category. The following graphs show the evolution of some of these metrics over time for each category.
-
-| Category                | Number of Subcategories | Number of Pages | Number of Contributors | Number of Revisions |
-| ----------------------- | ----------------------- | --------------- | ---------------------- | ------------------- |
-| Amiga CD32 games        | 2                       | 143             | 8013                   | 29370               |
-| Game boy games          | 6                       | 167             | 8953                   | 30851               |
-| Machine learning        | 61                      | 1548            | 75217                  | 273260              |
-| Artificial intelligence | 109                     | 8695            | 610800                 | 29368               |
-
-***Amiga CD32 games***
-
-![Amiga CD32 games](outputs/Amiga_CD32_games.png)
-
-***Game boy games***
-
-![Game boy games](outputs/Game_boy_games.png)
-
-***Machine learning***
-
-![Machine learning](outputs/Machine_learning.png)
-
-***Artificial intelligence***
-
-![Artificial intelligence](outputs/Artificial_intelligence.png)

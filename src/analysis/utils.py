@@ -17,7 +17,6 @@ def plot_stats_for_category_quarterly(df, category_name):
     # Add a 'quarter' column based on the 'month'
     df['quarter'] = df['month'].dt.to_period('Q')
 
-    # Aggregate data by quarter (only numeric columns)
     quarterly_df = (
         df.groupby('quarter')[['total_contributions', 'unique_pages', 'unique_contributors']]
         .sum()
@@ -27,7 +26,6 @@ def plot_stats_for_category_quarterly(df, category_name):
     # Convert the 'quarter' back to a string for plotting
     quarterly_df['quarter'] = quarterly_df['quarter'].astype(str)
 
-    # Plot the data
     plt.figure(figsize=(10, 6))
     plt.plot(quarterly_df['quarter'], quarterly_df['unique_pages'], label='Unique Pages')
     plt.plot(quarterly_df['quarter'], quarterly_df['unique_contributors'], label='Unique Contributors')
@@ -39,7 +37,7 @@ def plot_stats_for_category_quarterly(df, category_name):
     plt.grid(True)
 
     # Customize x-axis ticks: Show every 5th year
-    xticks = quarterly_df['quarter'][::20]  # Adjust the interval as needed
+    xticks = quarterly_df['quarter'][::20]
     plt.xticks(ticks=range(0, len(quarterly_df['quarter']), 20), labels=xticks, rotation=45)
 
     plt.tight_layout()

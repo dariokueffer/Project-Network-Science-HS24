@@ -113,11 +113,11 @@ class BasicGraphAnalyzer:
         if G is None:
             G = self.graph
 
-        degree_map = G.degree_property_map("total")
+        # degree_map = G.degree_property_map("total")
 
-        degree_map.a = degree_map.a.astype(np.float64)
+        # degree_map.a = degree_map.a.astype(np.float64)
 
-        value, err = scalar_assortativity(G, degree_map)
+        value, err = scalar_assortativity(G, "total")
         return value
 
     def plot_log_log_probability_density(self, title):
